@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    >
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        >
+        <EditText
+            android:id="@+id/edtIdea"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Write your ideas!!!"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/edt_box"
+            android:inputType="textMultiLine">
+        </EditText>
+
+        <TextView
+            android:id="@+id/btnPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="6dp"
+            android:paddingHorizontal="18dp"
+            android:text="Post"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:background="@drawable/edt_box"
+            android:textAlignment="center">
+        </TextView>
+        </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvIdea"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"></ListView>
+
+
+</LinearLayout>

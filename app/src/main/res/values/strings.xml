@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">EmptyProject</string>
+    <string name="login_tilte">Login</string>
+    <string name="register_tilte">Register</string>
+</resources>
