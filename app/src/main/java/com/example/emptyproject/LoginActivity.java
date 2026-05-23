@@ -2,30 +2,20 @@ package com.example.emptyproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
-public class LoginActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    public static String registerEmail = "";
-    public static String registerPassword = "";
-    public static String name = "";
-    public static ArrayList<User> userDatabase = new ArrayList<>();
+public class LoginActivity extends AppCompatActivity {
 
     public static User currentUser;
 
@@ -34,11 +24,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (userDatabase.isEmpty()) {
-            userDatabase.add(new User("Alice", "alice@gmail.com", "123", "0911111111"));
-            userDatabase.add(new User("Bob", "bob@gmail.com", "123", "0922222222"));
-            userDatabase.add(new User("Charlie", "charlie@gmail.com", "123", "0933333333"));
-        }
 
         TextView tvRegister = findViewById(R.id.tvRegister);
 
@@ -58,13 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intentFromRegister = getIntent();
         if (intentFromRegister.hasExtra("emailReg")) {
-            registerEmail = intentFromRegister.getStringExtra("emailReg");
-            registerPassword = intentFromRegister.getStringExtra("passwordReg");
-            name = intentFromRegister.getStringExtra("nameReg");
-
-            String phoneReg = intentFromRegister.getStringExtra("phoneReg");
-            userDatabase.add(new User(name, registerEmail, registerPassword, phoneReg));
-
+            String registerEmail = intentFromRegister.getStringExtra("emailReg");
             edtEmail.setText(registerEmail);
         }
 
@@ -79,27 +58,35 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            boolean isLoginSuccess = false;
-            for (User u : userDatabase) {
-                if (u.getEmail().equals(email) && u.getPassword().equals(password)) {
-                    isLoginSuccess = true;
-                    currentUser = u;
 
-                    Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, HomeActivity.class);
-                    intent.putExtra("name", u.getName());
-                    intent.putExtra("email", u.getEmail());
-
-                    startActivity(intent);
-                    finish();
-                    break;
+            User loginRequest = new User("", email, password, "");
+            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+            apiService.login(loginRequest).enqueue(new Callback<AuthResponse>() {
+                @Override
+                public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        AuthResponse loginResponse = response.body();
+                        if (loginResponse.getStatus().equals("success")) {
+                            currentUser = loginResponse.getUser();
+                            Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Lỗi. Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-            if (!isLoginSuccess) {
-                Toast.makeText(this, "Sai email hoặc mật khẩu!", Toast.LENGTH_SHORT).show();
-            }
-        });
 
+                @Override
+                public void onFailure(Call<AuthResponse> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        });
     }
 
 

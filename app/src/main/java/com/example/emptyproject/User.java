@@ -1,13 +1,18 @@
 package com.example.emptyproject;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class User {
+    @SerializedName("name")
     private String name;
+    @SerializedName("email")
     private String email;
+    @SerializedName("password")
     private String password;
     private ArrayList<Status> myHiddenList;
-
+    @SerializedName("phone")
     private String phone;
     private ArrayList<User> friendList;
     private ArrayList<User> sentRequests;
@@ -36,9 +41,31 @@ public class User {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public ArrayList<Status> getMyHiddenList() { return myHiddenList; }
+    public ArrayList<Status> getMyHiddenList() {
+        if (myHiddenList == null) {
+            myHiddenList = new ArrayList<>();
+        }
+        return myHiddenList;
+    }
 
-    public ArrayList<User> getFriendList() { return friendList; }
-    public ArrayList<User> getSentRequests() { return sentRequests; }
-    public ArrayList<User> getReceivedRequests() { return receivedRequests; }
+    public ArrayList<User> getFriendList() {
+        if (friendList == null) {
+            friendList = new ArrayList<>();
+        }
+        return friendList;
+    }
+    public ArrayList<User> getSentRequests() {
+        if (sentRequests == null) {
+            sentRequests = new ArrayList<>();
+        }
+        return sentRequests;
+    }
+    public ArrayList<User> getReceivedRequests() {
+
+        if (receivedRequests == null) {
+            receivedRequests = new ArrayList<>();
+        }
+        return receivedRequests;
+
+    }
 }

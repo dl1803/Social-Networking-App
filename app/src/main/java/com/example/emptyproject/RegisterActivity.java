@@ -13,6 +13,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RegisterActivity extends AppCompatActivity {
 
     @Override
@@ -28,10 +32,10 @@ public class RegisterActivity extends AppCompatActivity {
         Button btnCreate = findViewById(R.id.btnCreate);
 
         btnCreate.setOnClickListener(v -> {
-            String name = edtName.getText().toString();
-            String email = edtEmail.getText().toString();
-            String password = edtPassword.getText().toString();
-            String confirmPassword = edtConfirmPassword.getText().toString();
+            String name = edtName.getText().toString().trim();
+            String email = edtEmail.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
+            String confirmPassword = edtConfirmPassword.getText().toString().trim();
             String phone = edtPhone.getText().toString().trim();
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || phone.isEmpty()) {
@@ -44,14 +48,48 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra("nameReg", name);
-            intent.putExtra("emailReg", email);
-            intent.putExtra("passwordReg", password);
-            intent.putExtra("phoneReg", phone);
-            startActivity(intent);
+            User registerRequest = new User(name, email, password, phone);
+            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+            apiService.register(registerRequest).enqueue(new Callback<AuthResponse>() {
+                @Override
+                public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().getStatus().equals("success")) {
+                            Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            intent.putExtra("emailReg", email);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        try {
+                            if (response.errorBody() != null) {
+                                // Lấy chuỗi JSON lỗi từ Server
+                                String errorJson = response.errorBody().string();
+
+                                // Tách lấy chữ "message" trong chuỗi lỗi
+                                org.json.JSONObject jsonObject = new org.json.JSONObject(errorJson);
+                                String errorMessage = jsonObject.getString("message");
+
+                                // Hiển thị lỗi thật sự từ S
+                                Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Lỗi từ máy chủ. Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(RegisterActivity.this, "Đã xảy ra lỗi không xác định!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AuthResponse> call, Throwable t) {
+                    Toast.makeText(RegisterActivity.this, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
 
@@ -60,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
         tvHaveAccount.setOnClickListener(v ->{
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
 
 
