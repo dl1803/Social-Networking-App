@@ -14,6 +14,21 @@ public class User {
     private ArrayList<Status> myHiddenList;
     @SerializedName("phone")
     private String phone;
+
+    @SerializedName("id")
+    private int id;
+
+    @SerializedName("address")
+    private String address;
+
+    @SerializedName("avatar_url")
+    private String avatarUrl;
+
+    @SerializedName("description")
+    private String description;
+
+    @SerializedName("created_at")
+    private String createdAt;
     private ArrayList<User> friendList;
     private ArrayList<User> sentRequests;
     private ArrayList<User> receivedRequests;
@@ -68,4 +83,19 @@ public class User {
         return receivedRequests;
 
     }
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

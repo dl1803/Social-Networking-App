@@ -2,6 +2,8 @@ package com.example.emptyproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,11 +15,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
+    private List<String> existingEmails = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,39 @@ public class RegisterActivity extends AppCompatActivity {
         EditText edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         EditText edtPhone = findViewById(R.id.edtPhone);
         Button btnCreate = findViewById(R.id.btnCreate);
+
+        fetchAllExistingEmails();
+
+        edtEmail.addTextChangedListener(new TextWatcher() {
+            // s : text hện tại trước khi sửa
+            // start : vị trí bắt đầu sửa
+            // before : số kí tự cũ bị thay thế
+            // after : số kí tự mới sẽ được thêm vào
+
+            // gọi sau khi text bị thay đổi
+            // count : số ký tự sẽ bị xóa/thay thế
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+            // gọi trước khi text bị thay đổi
+            // count : số kí tự mới được thêm
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            // gọi khi text thay đổi
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String currentTypingEmail = s.toString().trim();
+
+                if (existingEmails.contains(currentTypingEmail)) {
+                    edtEmail.setError("Email này đã được sử dụng!");
+                } else {
+                    edtEmail.setError(null);
+                }
+            }
+        });
 
         btnCreate.setOnClickListener(v -> {
             String name = edtName.getText().toString().trim();
@@ -100,8 +139,23 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
 
+    private void fetchAllExistingEmails() {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService.getAllEmails().enqueue(new Callback<EmailListResponse>() {
+            @Override
+            public void onResponse(Call<EmailListResponse> call, Response<EmailListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if ("success".equals(response.body().getStatus())) {
+                        existingEmails = response.body().getEmails();
+                    }
+                }
+            }
 
-
+            @Override
+            public void onFailure(Call<EmailListResponse> call, Throwable t) {
+            }
+        });
     }
 }

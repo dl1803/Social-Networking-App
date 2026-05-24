@@ -16,7 +16,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Alice!"
-            android:textSize="40dp"
+            android:textSize="30dp"
             android:textStyle="bold"
             android:layout_gravity="center"
             android:textAlignment="center"
@@ -140,7 +140,7 @@
     <EditText
         android:id="@+id/edtDescription"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="60dp"
         android:textSize="16dp"
         android:inputType="text"
         android:background="@drawable/edt_box"
