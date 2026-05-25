@@ -14,6 +14,18 @@ public class RetrofitClient {
         // thêm cấu hình retry khi kết nối thất bại cho OkHttpClient(obj gửi nhận data từ S)
         OkHttpClient client = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
+                // Interceptor là trung gian giữa client và server, có chức năng sửa request, thêm header trc khi gửi lên server
+                .addInterceptor(chain -> {
+                    // chain là chuỗi request gửi lên server, dùng để lấy request hiện tại
+                    okhttp3.Request original = chain.request();
+                    // Thêm Header "Connection: close" : yêu cầu đóng socket k cần giữ lại connection(do cơ chế Keep-Alive Connection tự giữ lại kết nối để  chạy nhanh hơn)
+                    // giúp kh tái sử dụng connection cũ khi bị lỗi (vd lỗi hiện tại : "unexpected end of stream" do bị đóng socket bất ngờ khi đang đọc response)
+                    // gây chậm hơn -> chỉ dùng khi bị lỗi
+                    okhttp3.Request request = original.newBuilder()
+                            .header("Connection", "close")
+                            .build();
+                    return chain.proceed(request); // gửi request đã update đến server
+                })
                 .build();
 
         if (retrofit == null) {

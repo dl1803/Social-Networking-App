@@ -22,7 +22,7 @@
             android:name=".FriendManagerActivity"
             android:exported="false" />
         <activity
-            android:name=".StatusDetailActivity"
+            android:name=".PostDetailActivity"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"

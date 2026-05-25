@@ -11,11 +11,11 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class StatusAdapter extends ArrayAdapter<Status> {
+public class PostAdapter extends ArrayAdapter<Post> {
     int resource;
-    private List<Status> listStatus;
+    private List<Post> listStatus;
 
-    public StatusAdapter(Context context, int resource, List<Status> listStatus) {
+    public PostAdapter(Context context, int resource, List<Post> listStatus) {
         super(context, resource, listStatus);
         this.resource = resource;
         this.listStatus = listStatus;
@@ -31,7 +31,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
             v = vi.inflate(this.resource, null);
         }
 
-        Status currentStatus = getItem(position);
+        Post currentStatus = getItem(position);
 
         if (currentStatus != null) {
             TextView tvName = (TextView) v.findViewById(R.id.tvName);
@@ -40,13 +40,28 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 
 
             if (tvName != null) {
-                tvName.setText(currentStatus.getName());
+                tvName.setText(currentStatus.getAuthor().getName());
             }
             if (tvContent != null) {
                 tvContent.setText(currentStatus.getContent());
             }
             if (tvDate != null) {
-                tvDate.setText(currentStatus.getDate());
+                String rawDate = currentStatus.getCreatedAt();
+                if (rawDate != null && rawDate.contains("T")) {
+                    try {
+                        String[] parts = rawDate.split("T");
+                        String datePart = parts[0];
+                        String timePart = parts[1].substring(0, 5);
+                        String[] dateElements = datePart.split("-");
+                        String formattedDate = dateElements[2] + "/" + dateElements[1] + "/" + dateElements[0] + " " + timePart;
+
+                        tvDate.setText(formattedDate);
+                    } catch (Exception e) {
+                        tvDate.setText(rawDate);
+                    }
+                } else {
+                    tvDate.setText(rawDate != null ? rawDate : "Vừa xong");
+                }
             }
         }
         return v;

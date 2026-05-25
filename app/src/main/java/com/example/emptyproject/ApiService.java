@@ -22,4 +22,10 @@ public interface ApiService {
 
     @PATCH("api/users/{user_id}/profile")
     Call<AuthResponse> updateProfile(@Path("user_id") int userId, @Body User updateRequest);
+
+    @GET("api/posts")
+    Call<PostListResponse> getAllPosts();
+
+    @POST("api/posts")
+    Call<SinglePostResponse> createPost(@Body Post postRequest);
 }

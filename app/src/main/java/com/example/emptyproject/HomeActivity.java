@@ -20,81 +20,135 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
-    public static ArrayList<Status> publicStatusList = new ArrayList<>();
-    ArrayList<Status> displayList = new ArrayList<>();
-    StatusAdapter adapter;
+    ArrayList<Post> displayList = new ArrayList<>();
+    PostAdapter adapter;
     boolean isSortDateASC = true;
-
-    String currentName = "";
-    String currentEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        if (publicStatusList.isEmpty()) {
-            publicStatusList.add(new Status("Alice", "Hello ngày mới!", "alice@gmail.com", "20/03/2026"));
-            publicStatusList.add(new Status("Bob", "Một ngày tốt lành!", "bob@gmail.com", "22/03/2026"));
-            publicStatusList.add(new Status("Alice", "Hôm nay ăn gì nhỉ?", "alice@gmail.com", "25/03/2026"));
-        }
 
         EditText edtIdea = findViewById(R.id.edtIdea);
         TextView btnPost = findViewById(R.id.btnPost);
         ListView lvIdea = findViewById(R.id.lvIdea);
 
-        Intent intentFromLogin = getIntent();
-        currentName = intentFromLogin.getStringExtra("name");
-        currentEmail = intentFromLogin.getStringExtra("email");
-
-        adapter = new StatusAdapter(this, R.layout.item_status, displayList);
+        adapter = new PostAdapter(this, R.layout.item_status, displayList);
         lvIdea.setAdapter(adapter);
 
         registerForContextMenu(lvIdea); // đki context menu cho lvIdea
 
-        refreshDisplayList();
+        fetchAllPosts();
 
         btnPost.setOnClickListener(v -> {
             String content = edtIdea.getText().toString().trim();
-            if (!content.isEmpty()) {
-                String nameToDisplay = currentName != null ? currentName : "Guest";
 
-                Status newStatus = new Status(nameToDisplay, content, currentEmail);
-                publicStatusList.add(newStatus);
-
-                refreshDisplayList();
-                edtIdea.setText("");
-            } else {
-                Toast.makeText(this, "Vui lòng nhập nội dung!", Toast.LENGTH_SHORT).show();
+            if (content.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập nội dung bài viết!", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            if (LoginActivity.currentUser == null) {
+                Toast.makeText(this, "Vui lòng đăng nhập để đăng bài!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Post newPost = new Post(LoginActivity.currentUser.getId(), content);
+
+            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+            apiService.createPost(newPost).enqueue(new Callback<SinglePostResponse>() {
+                @Override
+                public void onResponse(Call<SinglePostResponse> call, Response<SinglePostResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        SinglePostResponse postResponse = response.body();
+
+                        if ("success".equals(postResponse.getStatus())) {
+                            Toast.makeText(HomeActivity.this, "Đã đăng bài viết mới!", Toast.LENGTH_SHORT).show();
+
+                            edtIdea.setText("");
+
+                            fetchAllPosts();
+
+                        } else {
+                            Toast.makeText(HomeActivity.this, postResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(HomeActivity.this, "Lỗi đăng bài. Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SinglePostResponse> call, Throwable t) {
+                    Toast.makeText(HomeActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         lvIdea.setOnItemClickListener((parent, view, position, id) -> {
-            Status clickedStatus = displayList.get(position);
+            Post clickedPost = displayList.get(position);
 
-            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-            intent.putExtra("name", clickedStatus.getName());
-            intent.putExtra("email", clickedStatus.getEmail());
-
-            startActivity(intent);
+            if (clickedPost.getAuthor() != null) {
+                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                intent.putExtra("user_id", clickedPost.getAuthor().getId());
+                startActivity(intent);
+            }
         });
     }
 
-    private void refreshDisplayList() {
-        displayList.clear();
-        for (Status s : publicStatusList) {
-            if (LoginActivity.currentUser != null && !LoginActivity.currentUser.getMyHiddenList().contains(s)) {
-                displayList.add(s);
+    private void fetchAllPosts() {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService.getAllPosts().enqueue(new Callback<PostListResponse>() {
+            @Override
+            public void onResponse(Call<PostListResponse> call, Response<PostListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PostListResponse postResponse = response.body();
+
+                    if ("success".equals(postResponse.getStatus())) {
+
+                        displayList.clear();
+                        List<Post> serverPosts = postResponse.getData();
+
+                        if (serverPosts != null) {
+                            for (Post p : serverPosts) {
+                                boolean isHidden = false;
+                                if (LoginActivity.currentUser != null) {
+                                    for (Post hiddenPost : LoginActivity.currentUser.getMyHiddenList()) {
+                                        if (hiddenPost.getId() == p.getId()) {
+                                            isHidden = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!isHidden) {
+                                    displayList.add(p);
+                                }
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+
+                    } else {
+                        Toast.makeText(HomeActivity.this, "Lỗi lấy bài viết!", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
-        }
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+
+            @Override
+            public void onFailure(Call<PostListResponse> call, Throwable t) {
+                Toast.makeText(HomeActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,39 +161,31 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.opt_profile) {
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("name", currentName);
-            intent.putExtra("email", currentEmail);
             startActivity(intent);
             return true;
         } else if (id == R.id.opt_sort_author) {
-            Collections.sort(displayList, new Comparator<Status>() {
+            Collections.sort(displayList, new Comparator<Post>() {
                 @Override
-                public int compare(Status s1, Status s2) {
-                    return s1.getName().compareToIgnoreCase(s2.getName());
+                public int compare(Post p1, Post p2) {
+                    String name1 = p1.getAuthor() != null ? p1.getAuthor().getName() : "";
+                    String name2 = p2.getAuthor() != null ? p2.getAuthor().getName() : "";
+                    return name1.compareToIgnoreCase(name2);
                 }
             });
             adapter.notifyDataSetChanged();
             Toast.makeText(this, "Đã sắp xếp theo Author", Toast.LENGTH_SHORT).show();
             return super.onOptionsItemSelected(item);
         } else if (id == R.id.opt_sort_date) {
-            Collections.sort(displayList, new Comparator<Status>() {
+            Collections.sort(displayList, new Comparator<Post>() {
                 @Override
-                public int compare(Status s1, Status s2) {
-                    // Buộc dùng try - catch vì sử dụng hàm parse() để convert String -> Date có thể gây ra lỗi nếu String không đúng định dạng
-                    try {
-                        // SimpleDateFormat (Định dạng thời gian)
-                        // Bước này giúp hệ thống hiểu cấu trúc định dạng ngày tháng năm hiện tại(String) của obj s1, s2 -> để convert thành timestamp -> tạo nên Date
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        Date date1 = sdf.parse(s1.getDate());
-                        Date date2 = sdf.parse(s2.getDate());
+                public int compare(Post p1, Post p2) {
+                    String date1 = p1.getCreatedAt() != null ? p1.getCreatedAt() : "";
+                    String date2 = p2.getCreatedAt() != null ? p2.getCreatedAt() : "";
 
-                        if (isSortDateASC) {
-                            return date1.compareTo(date2);
-                        } else {
-                            return date2.compareTo(date1);
-                        }
-                    } catch (Exception e) {
-                        return 0; // Lỗi -> không thay đổi thứ tự (==0)
+                    if (isSortDateASC) {
+                        return date1.compareTo(date2);
+                    } else {
+                        return date2.compareTo(date1);
                     }
                 }
             });
@@ -175,22 +221,25 @@ public class HomeActivity extends AppCompatActivity {
         // class này chứa : - info.position (vị trí item)   - //info.id (id item)     - //info.targetView (view bị click)
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        Status selectedStatus = displayList.get(position);
+        Post selectedPost = displayList.get(position);
 
         int id = item.getItemId();
 
         if (id == R.id.ctx_detail) {
-            Intent intent = new Intent(HomeActivity.this, StatusDetailActivity.class);
-            intent.putExtra("detail_name", selectedStatus.getName());
-            intent.putExtra("detail_date", selectedStatus.getDate());
-            intent.putExtra("detail_content", selectedStatus.getContent());
+            Intent intent = new Intent(HomeActivity.this, PostDetailActivity.class);
+            String authorName = selectedPost.getAuthor() != null ? selectedPost.getAuthor().getName() : "Unknown";
+
+            intent.putExtra("detail_name", authorName);
+            intent.putExtra("detail_date", selectedPost.getCreatedAt());
+            intent.putExtra("detail_content", selectedPost.getContent());
             startActivity(intent);
             return true;
         }
         else if (id == R.id.ctx_hide) {
             if (LoginActivity.currentUser != null) {
-                LoginActivity.currentUser.getMyHiddenList().add(selectedStatus);
-                refreshDisplayList();
+                LoginActivity.currentUser.getMyHiddenList().add(selectedPost);
+                displayList.remove(selectedPost);
+                adapter.notifyDataSetChanged();
                 Toast.makeText(this, "Đã ẩn bài viết với bạn!", Toast.LENGTH_SHORT).show();
             }
             return true;

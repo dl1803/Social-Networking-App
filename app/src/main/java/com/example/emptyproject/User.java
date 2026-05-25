@@ -11,7 +11,7 @@ public class User {
     private String email;
     @SerializedName("password")
     private String password;
-    private ArrayList<Status> myHiddenList;
+    private ArrayList<Post> myHiddenList;
     @SerializedName("phone")
     private String phone;
 
@@ -56,7 +56,7 @@ public class User {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public ArrayList<Status> getMyHiddenList() {
+    public ArrayList<Post> getMyHiddenList() {
         if (myHiddenList == null) {
             myHiddenList = new ArrayList<>();
         }
