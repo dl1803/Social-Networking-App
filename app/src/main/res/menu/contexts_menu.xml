@@ -4,6 +4,9 @@
         android:id="@+id/ctx_detail"
         android:title="Detail" />
 
+    <item android:id="@+id/ctx_delete"
+        android:title="Delete" />
+
     <item
         android:id="@+id/ctx_hide"
         android:title="Hide" />

@@ -6,187 +6,223 @@
     android:orientation="vertical"
     android:padding="30dp"
     >
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    >
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Alice!"
+                        android:textSize="30dp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        ></TextView>
+
+                    <ImageView
+                        android:id="@+id/imgAvatar"
+                        android:layout_width="180dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/ic_images"
+                        ></ImageView>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textSize="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:inputType="text"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textSize="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone"
+                    android:textSize="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:inputType="phone"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:textSize="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avatar URL"
+                    android:textSize="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:inputType="textUri"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textSize="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    ></TextView>
+
+                <EditText
+                    android:id="@+id/edtDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:textSize="16dp"
+                    android:inputType="text"
+                    android:background="@drawable/edt_box"
+                    ></EditText>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp"
+                    >
+
+                    <Button
+                        android:id="@+id/btnSave"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Save"
+                        android:textSize="18sp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:textColor="@color/black"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/black"
+                        app:cornerRadius="0dp"
+                        ></Button>
+
+                    <View
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        >
+                    </View>
+
+                    <Button
+                        android:id="@+id/btnLogout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Logout"
+                        android:textSize="18sp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:textColor="@color/black"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/black"
+                        app:cornerRadius="0dp"></Button>
+
+                </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        >
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
         <TextView
-            android:id="@+id/tvName"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Alice!"
-            android:textSize="30dp"
+            android:text="Các bài đăng đã chia sẻ"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            ></TextView>
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="10dp" />
 
-        <ImageView
-            android:id="@+id/imgAvatar"
-            android:layout_width="180dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_images"
-            ></ImageView>
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        android:textSize="16dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:inputType="text"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textSize="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Phone"
-        android:textSize="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:inputType="phone"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address"
-        android:textSize="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Avatar URL"
-        android:textSize="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtAvatar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:inputType="textUri"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:textSize="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        ></TextView>
-
-    <EditText
-        android:id="@+id/edtDescription"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:textSize="16dp"
-        android:inputType="text"
-        android:background="@drawable/edt_box"
-        ></EditText>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="4dp"
-        >
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Save"
-            android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="@color/black"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/black"
-            app:cornerRadius="0dp"
-            ></Button>
-
-        <View
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            >
-        </View>
-
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Logout"
-            android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent"
-            android:textColor="@color/black"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/black"
-            app:cornerRadius="0dp"></Button>
-
+        <ListView
+            android:id="@+id/lvUserPosts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#DDDDDD"
+            android:dividerHeight="1dp"
+            android:background="#F5F5F5" />
     </LinearLayout>
 
 

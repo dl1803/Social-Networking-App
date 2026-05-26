@@ -210,6 +210,25 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.lvIdea) {
             getMenuInflater().inflate(R.menu.contexts_menu, menu);
+
+            // Check quyền sở hữu bài viết
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            Post selectedPost = displayList.get(info.position);
+
+            MenuItem deleteItem = menu.findItem(R.id.ctx_delete);
+            MenuItem hideItem = menu.findItem(R.id.ctx_hide);
+
+            if (LoginActivity.currentUser != null) {
+                if (selectedPost.getUserId() == LoginActivity.currentUser.getId()) {
+                    // Nếu là bài của chỉnh minh: Hiện nút Xóa, Giấu nút Ẩn
+                    if (deleteItem != null) deleteItem.setVisible(true);
+                    if (hideItem != null) hideItem.setVisible(false);
+                } else {
+                    // Nếu là bài NGƯỜI KHÁC: Giấu nút Xóa, Hiện nút Ẩn
+                    if (deleteItem != null) deleteItem.setVisible(false);
+                    if (hideItem != null) hideItem.setVisible(true);
+                }
+            }
         }
     }
 
@@ -243,7 +262,39 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Đã ẩn bài viết với bạn!", Toast.LENGTH_SHORT).show();
             }
             return true;
+        } else if (id == R.id.ctx_delete) {
+            // check quyền sở hữu lần 2
+            if (LoginActivity.currentUser != null && selectedPost.getUserId() == LoginActivity.currentUser.getId()) {
+
+                ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+                apiService.deletePost(selectedPost.getId()).enqueue(new Callback<SinglePostResponse>() {
+                    @Override
+                    public void onResponse(Call<SinglePostResponse> call, Response<SinglePostResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            if ("success".equals(response.body().getStatus())) {
+                                displayList.remove(selectedPost);
+                                adapter.notifyDataSetChanged();
+                                Toast.makeText(HomeActivity.this, "Đã xóa bài viết vĩnh viễn!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(HomeActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(HomeActivity.this, "Xóa thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<SinglePostResponse> call, Throwable t) {
+                        Toast.makeText(HomeActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Lỗi quyền: Bạn không thể xóa bài người khác!", Toast.LENGTH_SHORT).show();
+            }
+            return true;
         }
+
+
         return super.onContextItemSelected(item);
     }
 }

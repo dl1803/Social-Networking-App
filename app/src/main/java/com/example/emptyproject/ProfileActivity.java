@@ -2,9 +2,11 @@ package com.example.emptyproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +30,10 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvName;
     EditText edtName, edtEmail, edtPhone, edtAvatar, edtAddress, edtDescription;
     ImageView imgAvatar;
+
+    ListView lvUserPosts;
+    ArrayList<Post> userPostsList = new ArrayList<>();
+    PostAdapter userPostsAdapter;
 
     int currentViewedUserId = -1;
 
@@ -62,6 +71,13 @@ public class ProfileActivity extends AppCompatActivity {
         fetchUserProfile(currentViewedUserId);
 
 
+        lvUserPosts = findViewById(R.id.lvUserPosts);
+        userPostsAdapter = new PostAdapter(this, R.layout.item_status, userPostsList);
+        lvUserPosts.setAdapter(userPostsAdapter);
+
+        fetchUserPosts(currentViewedUserId);
+
+
         Button btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
             Toast.makeText(this, "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
@@ -76,6 +92,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         Button btnSave = findViewById(R.id.btnSave);
+        // check quyền sở hữu tài khoản : chỉnh chủ mới được chỉnh sửa và cập nhật , đăng xuất
+        if (LoginActivity.currentUser != null && currentViewedUserId != LoginActivity.currentUser.getId()) {
+
+            btnSave.setVisibility(View.GONE);
+            btnLogout.setVisibility(View.GONE);
+
+            edtName.setEnabled(false);
+            edtPhone.setEnabled(false);
+            edtAvatar.setEnabled(false);
+            edtAddress.setEnabled(false);
+            edtDescription.setEnabled(false);
+        }
         btnSave.setOnClickListener(v -> {
             String newName = edtName.getText().toString().trim();
             String newPhone = edtPhone.getText().toString().trim();
@@ -190,6 +218,34 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 Toast.makeText(ProfileActivity.this, "Lỗi kết nối mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchUserPosts(int userId) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService.getUserPosts(userId).enqueue(new Callback<PostListResponse>() {
+            @Override
+            public void onResponse(Call<PostListResponse> call, Response<PostListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PostListResponse postResponse = response.body();
+
+                    if ("success".equals(postResponse.getStatus())) {
+                        userPostsList.clear();
+
+                        List<Post> serverPosts = postResponse.getData();
+                        if (serverPosts != null) {
+                            userPostsList.addAll(serverPosts);
+                        }
+
+                        userPostsAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostListResponse> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Không thể tải bài viết cá nhân!", Toast.LENGTH_SHORT).show();
             }
         });
     }
