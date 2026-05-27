@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,6 +57,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         User user = userList.get(position);
 
         holder.tvUserName.setText(user.getName());
+        if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+            com.bumptech.glide.Glide.with(context)
+                    .load(user.getAvatarUrl())
+                    .placeholder(R.drawable.ic_background_img)
+                    .error(R.drawable.ic_background_img)
+                    .into(holder.imgAvatar);
+        } else {
+            holder.imgAvatar.setImageResource(R.drawable.ic_background_img);
+        }
 
         if (mode == 1) {
             holder.btnUserAction.setText("Accept");
@@ -101,6 +111,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView tvUserName, tvUserPhone;
         Button btnUserAction, btnDecline;
+        ImageView imgAvatar;
+
 
         // itemView là toàn bộ giao diện của 1 item lấy từ inflate(R.layout.item_user)
         // (3) tìm các view của item đó rồi lưu lại địa chỉ
@@ -109,6 +121,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvUserName = itemView.findViewById(R.id.tvUserName);
             btnUserAction = itemView.findViewById(R.id.btnUserAction);
             btnDecline = itemView.findViewById(R.id.btnDecline);
+            imgAvatar = itemView.findViewById(R.id.imgFriendAvatar);
         }
     }
 }

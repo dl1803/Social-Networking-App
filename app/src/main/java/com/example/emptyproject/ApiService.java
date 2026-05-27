@@ -35,4 +35,7 @@ public interface ApiService {
 
     @DELETE("api/posts/{post_id}")
     Call<SinglePostResponse> deletePost(@Path("post_id") int postId);
+
+    @GET("api/users/{user_id}/friends")
+    Call<FriendListResponse> getFriends(@Path("user_id") int userId);
 }

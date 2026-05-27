@@ -13,8 +13,9 @@
     >
 
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:id="@+id/imgFriendAvatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/ic_images"
         android:layout_marginBottom="12dp"/>
 
@@ -24,7 +25,7 @@
         android:layout_height="wrap_content"
         android:text="Name"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"
