@@ -56,20 +56,20 @@ public class FriendManagerActivity extends AppCompatActivity {
             friendList = new ArrayList<>();
         }
 
-        User fakeFriend1 = new User("Oguri Cap", "oguri@gmail.com", "123", "0909111");
-        fakeFriend1.setAvatarUrl("https://i.pravatar.cc/150?img=1"); // Lấy ảnh random trên mạng
-        friendList.add(fakeFriend1);
+        User fakeUser1 = new User("Hacker", "hacker88@gmail.com", "123", "0909111");
+        fakeUser1.setAvatarUrl("https://tse3.mm.bing.net/th/id/OIP.Ns8jniA5oxRt4_CqSOCgigHaHa?cb=thfc1falcon&rs=1&pid=ImgDetMain&o=7&rm=3"); // mock ảnh trên mạng
+        sentList.add(fakeUser1);
 
-        User fakeFriend2 = new User("Tokai Teio", "tokai@gmail.com", "123", "0909222");
-        fakeFriend2.setAvatarUrl("https://i.pravatar.cc/150?img=5");
+        User fakeFriend2 = new User("Vũ", "VuAVu@gmail.com", "123", "0909222");
+        fakeFriend2.setAvatarUrl("https://tse3.mm.bing.net/th/id/OIP.-OnBoYX4HOKMGx6s1wQH3AHaHw?cb=thfc1falcon&w=840&h=880&rs=1&pid=ImgDetMain&o=7&rm=3");
         friendList.add(fakeFriend2);
 
-        User fakeRequest = new User("McQueen", "mcqueen@gmail.com", "123", "0909333");
-        fakeRequest.setAvatarUrl("https://i.pravatar.cc/150?img=9");
-        receivedList.add(fakeRequest);
+        User fakeUser3 = new User("Người bí ẩn", "user@gmail.com", "123", "0909333");
+        fakeUser3.setAvatarUrl("https://cdn3.iconfinder.com/data/icons/diverse-cartoon-women-avatars/300/20-512.png");
+        receivedList.add(fakeUser3);
 
         setupAdapters();
-
+        // tạm tắt api lấy danh sách bbe vì chưa có api add friend, mock data để check UI
 //        if (LoginActivity.currentUser != null) {
 //            fetchFriendList(LoginActivity.currentUser.getId());
 //        }

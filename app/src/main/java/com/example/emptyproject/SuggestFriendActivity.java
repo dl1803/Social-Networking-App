@@ -111,6 +111,7 @@ public class SuggestFriendActivity extends AppCompatActivity implements LoaderMa
     private void filterSuggestFriends() {
         suggestList.clear();
 
+        // mock data để check UI
         ArrayList<User> tempServerUsers = new ArrayList<>();
         tempServerUsers.add(new User("User1", "test1@gmail.com", "123", "0911111111"));
         tempServerUsers.add(new User("User2", "test2@gmail.com", "123", "0922222222"));

@@ -167,8 +167,8 @@ public class HomeActivity extends AppCompatActivity {
             Collections.sort(displayList, new Comparator<Post>() {
                 @Override
                 public int compare(Post p1, Post p2) {
-                    String name1 = p1.getAuthor() != null ? p1.getAuthor().getName() : "";
-                    String name2 = p2.getAuthor() != null ? p2.getAuthor().getName() : "";
+                    String name1 = (p1.getAuthor() != null && p1.getAuthor().getName() != null) ? p1.getAuthor().getName() : "";
+                    String name2 = (p2.getAuthor() != null && p2.getAuthor().getName() != null) ? p2.getAuthor().getName() : "";
                     return name1.compareToIgnoreCase(name2);
                 }
             });
